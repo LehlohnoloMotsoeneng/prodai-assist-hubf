@@ -33,6 +33,7 @@ export const Route = createFileRoute("/tasks")({
 
 function Page() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState("");
   const [range, setRange] = useState("today");
   const [output, setOutput] = useState("");
@@ -45,7 +46,7 @@ function Page() {
     if (h) {
       setTasks(h.tasks);
       if (h.range) setRange(h.range);
-      toast.message("Loaded from meeting summary — review and plan.");
+      toast.message("Loaded from another tool — review and plan.");
     }
   }, []);
 
@@ -53,7 +54,9 @@ function Page() {
     if (!tasks.trim()) return toast.error("Add at least one task.");
     setLoading(true);
     try {
-      const r = await runTool("task", { tasks, range }, customPrompt);
+      const override = getPromptOverride("task");
+      const filled = override ? fillPrompt(override, { tasks, range }) : customPrompt;
+      const r = await runTool("task", { tasks, range }, filled);
       setOutput(r.output);
       setPrompt(r.prompt);
     } catch (e: any) { toast.error(e.message); }
