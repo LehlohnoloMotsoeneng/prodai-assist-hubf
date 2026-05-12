@@ -49,6 +49,6 @@ export function extractActionItems(md: string): string {
 }
 
 export function extractSummary(md: string): string {
-  const m = md.match(/##\s*Summary\s*\n([\s\S]*?)(?:\n##\s|$)/i);
+  const m = md.match(/##\s*(?:\d+\.\s*)?(?:Executive\s+)?Summary[^\n]*\n([\s\S]*?)(?:\n##\s|$)/i);
   return (m ? m[1] : md).trim().slice(0, 800);
 }
