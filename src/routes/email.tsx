@@ -161,6 +161,26 @@ function EmailPage() {
             onPromptChange={setCustomPrompt}
             exportTitle={subject || "Email"}
             calendarTitle={subject ? `Send: ${subject}` : "Send email"}
+            extraActions={output ? [
+              {
+                label: "Save tasks from this email",
+                icon: <ClipboardList className="h-3.5 w-3.5" />,
+                onClick: () => {
+                  // Pull bullet/numbered lines from the email body as tasks.
+                  const tasks = output
+                    .split("\n")
+                    .filter((l) => /^(\s*[-*•]\s+|\s*\d+\.\s+)/.test(l))
+                    .map((l) => l.replace(/^(\s*[-*•]\s+|\s*\d+\.\s+)/, "").trim())
+                    .filter(Boolean)
+                    .slice(0, 15)
+                    .join("\n");
+                  if (!tasks) return toast.error("No bullet tasks detected in the email.");
+                  setHandoff({ kind: "task", tasks, range: "this week", source: "email" });
+                  toast.success("Loaded into Task Planner");
+                  navigate({ to: "/tasks" });
+                },
+              },
+            ] : undefined}
           />
         </div>
       </div>
