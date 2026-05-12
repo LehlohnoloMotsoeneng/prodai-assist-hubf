@@ -23,20 +23,29 @@ export function takeHandoff<T extends Handoff["kind"]>(kind: T): Extract<Handoff
 export function extractActionItems(md: string): string {
   const lines = md.split("\n");
   const idx = lines.findIndex((l) => /action items/i.test(l));
-  if (idx === -1) {
-    return lines.filter((l) => /^[-*]\s+/.test(l)).slice(0, 12).join("\n");
-  }
+  const slice = idx === -1 ? lines : lines.slice(idx + 1);
   const out: string[] = [];
-  for (let i = idx + 1; i < lines.length; i++) {
-    const l = lines[i];
-    if (/^##\s+/.test(l)) break;
-    if (/^\|.*\|$/.test(l) && !/^\|?\s*:?-+/.test(l) && !/owner.*action/i.test(l)) {
-      const cells = l.slice(1, -1).split("|").map((c) => c.trim());
-      // Owner | Action | Deadline
-      if (cells.length >= 2) out.push(`${cells[1]}${cells[2] ? " (due " + cells[2] + ")" : ""}${cells[0] && cells[0] !== "TBD" ? " — " + cells[0] : ""}`);
-    } else if (/^[-*]\s+/.test(l)) out.push(l.replace(/^[-*]\s+/, ""));
+  for (const l of slice) {
+    if (idx !== -1 && /^##\s+/.test(l)) break;
+    if (/^\|.*\|$/.test(l)) {
+      // Skip header + separator rows.
+      if (/^\|?\s*:?-+/.test(l)) continue;
+      const cells = l.slice(1, -1).split("|").map((c) => c.trim()).filter(Boolean);
+      if (cells.length === 0) continue;
+      const lower = cells.map((c) => c.toLowerCase());
+      if (lower.includes("task") || lower.includes("owner") || lower.includes("action")) continue;
+      // Try to detect Task vs Owner vs Deadline columns generically.
+      const [a, b, c, d] = cells;
+      const task = a;
+      const owner = b && b !== "TBD" ? ` — ${b}` : "";
+      const due = c ? ` (due ${c})` : "";
+      const pri = d ? ` [${d}]` : "";
+      out.push(`${task}${owner}${due}${pri}`);
+    } else if (/^[-*]\s+/.test(l)) {
+      out.push(l.replace(/^[-*]\s+/, ""));
+    }
   }
-  return out.join("\n");
+  return out.slice(0, 20).join("\n");
 }
 
 export function extractSummary(md: string): string {
