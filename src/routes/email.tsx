@@ -37,6 +37,7 @@ export const Route = createFileRoute("/email")({
 
 function EmailPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [recipient, setRecipient] = useState("");
   const [subject, setSubject] = useState("");
   const [points, setPoints] = useState("");
@@ -52,17 +53,21 @@ function EmailPage() {
     if (h) {
       setSubject(h.subject);
       setPoints(h.points);
-      toast.message("Loaded from meeting summary — review and generate.");
+      toast.message("Loaded from another tool — review and generate.");
     }
   }, []);
 
   const generate = async () => {
     setLoading(true);
     try {
+      const override = getPromptOverride("email");
+      const filled = override
+        ? fillPrompt(override, { recipient, subject, points, tone, audience })
+        : customPrompt;
       const r = await runTool(
         "email",
         { recipient, subject, points, tone, audience },
-        customPrompt,
+        filled,
       );
       setOutput(r.output);
       setPrompt(r.prompt);
