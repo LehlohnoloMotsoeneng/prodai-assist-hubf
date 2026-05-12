@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TasksRouteImport } from './routes/tasks'
+import { Route as PromptsRouteImport } from './routes/prompts'
 import { Route as MeetingsRouteImport } from './routes/meetings'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HistoryRouteImport } from './routes/history'
@@ -22,6 +23,11 @@ import { Route as ChatThreadIdRouteImport } from './routes/chat.$threadId'
 const TasksRoute = TasksRouteImport.update({
   id: '/tasks',
   path: '/tasks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PromptsRoute = PromptsRouteImport.update({
+  id: '/prompts',
+  path: '/prompts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MeetingsRoute = MeetingsRouteImport.update({
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/meetings': typeof MeetingsRoute
+  '/prompts': typeof PromptsRoute
   '/tasks': typeof TasksRoute
   '/chat/$threadId': typeof ChatThreadIdRoute
   '/chat/': typeof ChatIndexRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/meetings': typeof MeetingsRoute
+  '/prompts': typeof PromptsRoute
   '/tasks': typeof TasksRoute
   '/chat/$threadId': typeof ChatThreadIdRoute
   '/chat': typeof ChatIndexRoute
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/meetings': typeof MeetingsRoute
+  '/prompts': typeof PromptsRoute
   '/tasks': typeof TasksRoute
   '/chat/$threadId': typeof ChatThreadIdRoute
   '/chat/': typeof ChatIndexRoute
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
     | '/history'
     | '/login'
     | '/meetings'
+    | '/prompts'
     | '/tasks'
     | '/chat/$threadId'
     | '/chat/'
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/history'
     | '/login'
     | '/meetings'
+    | '/prompts'
     | '/tasks'
     | '/chat/$threadId'
     | '/chat'
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/history'
     | '/login'
     | '/meetings'
+    | '/prompts'
     | '/tasks'
     | '/chat/$threadId'
     | '/chat/'
@@ -140,6 +152,7 @@ export interface RootRouteChildren {
   HistoryRoute: typeof HistoryRoute
   LoginRoute: typeof LoginRoute
   MeetingsRoute: typeof MeetingsRoute
+  PromptsRoute: typeof PromptsRoute
   TasksRoute: typeof TasksRoute
 }
 
@@ -150,6 +163,13 @@ declare module '@tanstack/react-router' {
       path: '/tasks'
       fullPath: '/tasks'
       preLoaderRoute: typeof TasksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prompts': {
+      id: '/prompts'
+      path: '/prompts'
+      fullPath: '/prompts'
+      preLoaderRoute: typeof PromptsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/meetings': {
@@ -230,8 +250,19 @@ const rootRouteChildren: RootRouteChildren = {
   HistoryRoute: HistoryRoute,
   LoginRoute: LoginRoute,
   MeetingsRoute: MeetingsRoute,
+  PromptsRoute: PromptsRoute,
   TasksRoute: TasksRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
