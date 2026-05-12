@@ -109,6 +109,8 @@ function Page() {
             onSave={output ? save : undefined}
             prompt={prompt}
             onPromptChange={setCustomPrompt}
+            exportTitle={`Plan (${range})`}
+            calendarTitle={`Focus block — ${range}`}
           />
         </div>
       </div>
