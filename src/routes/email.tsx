@@ -153,6 +153,8 @@ function EmailPage() {
             onSave={output ? save : undefined}
             prompt={prompt}
             onPromptChange={setCustomPrompt}
+            exportTitle={subject || "Email"}
+            calendarTitle={subject ? `Send: ${subject}` : "Send email"}
           />
         </div>
       </div>
