@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { AiOutput } from "@/components/AiOutput";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { runTool } from "@/lib/ai";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
+import { takeHandoff } from "@/lib/handoff";
 import { Header } from "./email";
 
 export const Route = createFileRoute("/tasks")({
@@ -37,6 +38,15 @@ function Page() {
   const [prompt, setPrompt] = useState<string | undefined>();
   const [customPrompt, setCustomPrompt] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const h = takeHandoff("task");
+    if (h) {
+      setTasks(h.tasks);
+      if (h.range) setRange(h.range);
+      toast.message("Loaded from meeting summary — review and plan.");
+    }
+  }, []);
 
   const generate = async () => {
     if (!tasks.trim()) return toast.error("Add at least one task.");
