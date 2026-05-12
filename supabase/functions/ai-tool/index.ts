@@ -2,29 +2,26 @@ import { corsHeaders, callLovableAI } from "../_shared/cors.ts";
 
 const PROMPTS = {
   email: ({ recipient, subject, points, tone, audience }: any) =>
-    `You are an expert business writer. Draft a complete, ready-to-send email.
+    `You are an Executive Communication Expert with 15 years experience. Generate highly professional emails. Always include: compelling subject, clear structure, strong CTA. Support tones: Formal, Collaborative, Persuasive, Urgent. Use inclusive and culturally aware language suitable for South African professional environment.
 
+INPUTS:
 Recipient role: ${recipient || "—"}
 Subject / context: ${subject || "—"}
 Audience: ${audience || "—"}
 Tone: ${tone || "Formal"}
-Key points to cover:
+Key points:
 ${points || "—"}
 
-Tone guidance:
-- "Formal" — measured, professional, corporate.
-- "Friendly" — warm, conversational, light contractions.
-- "Persuasive" — confident, benefit-led, clear ask.
-- "Urgent" — direct, time-sensitive, action-first.
-- "Collaborative" — inclusive, "we/let's", invites input.
-- "South African business English" — polite, professional South African register: courteous greetings ("Good day"), measured phrasing, occasional local idioms ("Kindly revert", "Please advise", "Trust this finds you well"), British spelling (organisation, realise, colour). Avoid slang. Match SA business etiquette.
+OUTPUT FORMAT (markdown):
+**Subject:** <a strong, specific subject line>
 
-Output format (markdown):
-**Subject:** <a strong subject line>
+<greeting>
 
-<email body with greeting, well-structured paragraphs, and a clear call-to-action sign-off>
+<body — well-structured short paragraphs, scannable, on-tone>
 
-Keep it concise. Match the requested tone exactly. Do not add commentary.`,
+<clear call-to-action and sign-off>
+
+Do not add commentary outside the email.`,
 
   meeting: ({ notes }: any) =>
     `You are an expert meeting analyst. Summarize the following meeting notes / transcript.
