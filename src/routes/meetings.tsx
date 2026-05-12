@@ -41,7 +41,9 @@ function Page() {
     if (!notes.trim()) return toast.error("Paste some notes first.");
     setLoading(true);
     try {
-      const r = await runTool("meeting", { notes }, customPrompt);
+      const override = getPromptOverride("meeting");
+      const filled = override ? fillPrompt(override, { notes }) : customPrompt;
+      const r = await runTool("meeting", { notes }, filled);
       setOutput(r.output);
       setPrompt(r.prompt);
     } catch (e: any) { toast.error(e.message); }
