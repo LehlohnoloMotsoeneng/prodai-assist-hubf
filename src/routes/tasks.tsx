@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { AiOutput } from "@/components/AiOutput";
@@ -8,12 +8,13 @@ import { Label } from "@/components/ui/label";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { ClipboardList } from "lucide-react";
+import { ClipboardList, Mail } from "lucide-react";
 import { runTool } from "@/lib/ai";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
-import { takeHandoff } from "@/lib/handoff";
+import { setHandoff, takeHandoff } from "@/lib/handoff";
+import { getPromptOverride, fillPrompt } from "@/lib/prompts";
 import { Header } from "./email";
 
 export const Route = createFileRoute("/tasks")({
