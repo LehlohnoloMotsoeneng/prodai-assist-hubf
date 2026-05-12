@@ -115,6 +115,22 @@ function Page() {
             onPromptChange={setCustomPrompt}
             exportTitle={`Plan (${range})`}
             calendarTitle={`Focus block — ${range}`}
+            extraActions={output ? [
+              {
+                label: "Generate email about these tasks",
+                icon: <Mail className="h-3.5 w-3.5" />,
+                onClick: () => {
+                  setHandoff({
+                    kind: "email",
+                    subject: `Plan & priorities (${range})`,
+                    points: tasks,
+                    source: "task",
+                  });
+                  toast.success("Loaded into Email Generator");
+                  navigate({ to: "/email" });
+                },
+              },
+            ] : undefined}
           />
         </div>
       </div>
