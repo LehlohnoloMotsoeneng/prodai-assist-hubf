@@ -5,6 +5,7 @@ import {
   ClipboardList,
   CalendarCheck,
   Bot,
+  History,
   Sparkles,
 } from "lucide-react";
 import {
@@ -27,6 +28,7 @@ const items = [
   { title: "Meeting Summarizer", url: "/meetings", icon: CalendarCheck },
   { title: "Task Planner", url: "/tasks", icon: ClipboardList },
   { title: "AI Assistant", url: "/chat", icon: Bot },
+  { title: "Session History", url: "/history", icon: History },
 ];
 
 export function AppSidebar() {
