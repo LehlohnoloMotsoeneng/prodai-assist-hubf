@@ -7,6 +7,8 @@ import {
   Bot,
   History,
   Sparkles,
+  BookOpen,
+  ShieldCheck,
 } from "lucide-react";
 import {
   Sidebar,
@@ -21,6 +23,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { ResponsibleAIDialog } from "./ResponsibleAI";
 
 const items = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
@@ -29,6 +32,7 @@ const items = [
   { title: "Task Planner", url: "/tasks", icon: ClipboardList },
   { title: "AI Assistant", url: "/chat", icon: Bot },
   { title: "Session History", url: "/history", icon: History },
+  { title: "Prompt Library", url: "/prompts", icon: BookOpen },
 ];
 
 export function AppSidebar() {
@@ -52,7 +56,7 @@ export function AppSidebar() {
             <div className="leading-tight">
               <div className="text-sm font-semibold">ProdAI</div>
               <div className="text-[10px] text-muted-foreground">
-                Workplace assistant
+                Your AI Workplace Assistant
               </div>
             </div>
           )}
@@ -78,8 +82,20 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <ResponsibleAIDialog
+              trigger={
+                <SidebarMenuButton className="text-muted-foreground hover:text-foreground">
+                  <ShieldCheck className="h-4 w-4" />
+                  {!collapsed && <span>Responsible AI</span>}
+                </SidebarMenuButton>
+              }
+            />
+          </SidebarMenuItem>
+        </SidebarMenu>
         {!collapsed && (
-          <p className="px-2 pb-2 text-[10px] text-muted-foreground">
+          <p className="px-2 pb-2 pt-1 text-[10px] text-muted-foreground">
             AI outputs may be inaccurate — please review.
           </p>
         )}

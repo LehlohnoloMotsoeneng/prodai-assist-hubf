@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { AiOutput } from "@/components/AiOutput";
@@ -8,12 +8,13 @@ import { Label } from "@/components/ui/label";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { ClipboardList } from "lucide-react";
+import { ClipboardList, Mail } from "lucide-react";
 import { runTool } from "@/lib/ai";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
-import { takeHandoff } from "@/lib/handoff";
+import { setHandoff, takeHandoff } from "@/lib/handoff";
+import { getPromptOverride, fillPrompt } from "@/lib/prompts";
 import { Header } from "./email";
 
 export const Route = createFileRoute("/tasks")({
@@ -32,6 +33,7 @@ export const Route = createFileRoute("/tasks")({
 
 function Page() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState("");
   const [range, setRange] = useState("today");
   const [output, setOutput] = useState("");
@@ -44,7 +46,7 @@ function Page() {
     if (h) {
       setTasks(h.tasks);
       if (h.range) setRange(h.range);
-      toast.message("Loaded from meeting summary — review and plan.");
+      toast.message("Loaded from another tool — review and plan.");
     }
   }, []);
 
@@ -52,7 +54,9 @@ function Page() {
     if (!tasks.trim()) return toast.error("Add at least one task.");
     setLoading(true);
     try {
-      const r = await runTool("task", { tasks, range }, customPrompt);
+      const override = getPromptOverride("task");
+      const filled = override ? fillPrompt(override, { tasks, range }) : customPrompt;
+      const r = await runTool("task", { tasks, range }, filled);
       setOutput(r.output);
       setPrompt(r.prompt);
     } catch (e: any) { toast.error(e.message); }
@@ -111,6 +115,22 @@ function Page() {
             onPromptChange={setCustomPrompt}
             exportTitle={`Plan (${range})`}
             calendarTitle={`Focus block — ${range}`}
+            extraActions={output ? [
+              {
+                label: "Generate email about these tasks",
+                icon: <Mail className="h-3.5 w-3.5" />,
+                onClick: () => {
+                  setHandoff({
+                    kind: "email",
+                    subject: `Plan & priorities (${range})`,
+                    points: tasks,
+                    source: "task",
+                  });
+                  toast.success("Loaded into Email Generator");
+                  navigate({ to: "/email" });
+                },
+              },
+            ] : undefined}
           />
         </div>
       </div>

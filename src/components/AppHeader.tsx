@@ -24,11 +24,15 @@ export function AppHeader() {
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b bg-background/80 px-3 backdrop-blur">
       <SidebarTrigger />
-      <div className="ml-1 flex items-center gap-2">
-        <span className="text-sm font-semibold tracking-tight">
-          ProdAI Assistant
-        </span>
-      </div>
+      <Link to="/" className="ml-1 flex items-center gap-2.5">
+        <div className="flex h-8 w-8 items-center justify-center rounded-md bg-gradient-to-br from-primary to-brand text-primary-foreground shadow-sm">
+          <span className="text-[11px] font-bold tracking-tight">PA</span>
+        </div>
+        <div className="hidden leading-tight sm:block">
+          <div className="text-sm font-semibold tracking-tight">ProdAI</div>
+          <div className="text-[10px] text-muted-foreground">Your AI Workplace Assistant</div>
+        </div>
+      </Link>
       <div className="ml-auto flex items-center gap-2">
         <Button asChild size="sm" className="gap-1.5">
           <Link to="/chat">

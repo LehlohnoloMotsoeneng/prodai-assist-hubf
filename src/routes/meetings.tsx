@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 import { Header } from "./email";
 import { setHandoff, extractActionItems, extractSummary } from "@/lib/handoff";
+import { getPromptOverride, fillPrompt } from "@/lib/prompts";
 
 export const Route = createFileRoute("/meetings")({
   component: () => (
@@ -40,7 +41,9 @@ function Page() {
     if (!notes.trim()) return toast.error("Paste some notes first.");
     setLoading(true);
     try {
-      const r = await runTool("meeting", { notes }, customPrompt);
+      const override = getPromptOverride("meeting");
+      const filled = override ? fillPrompt(override, { notes }) : customPrompt;
+      const r = await runTool("meeting", { notes }, filled);
       setOutput(r.output);
       setPrompt(r.prompt);
     } catch (e: any) { toast.error(e.message); }
@@ -90,7 +93,7 @@ function Page() {
             calendarTitle="Meeting follow-up"
             extraActions={output ? [
               {
-                label: "Send action items to Task Planner",
+                label: "Create Tasks from Action Items",
                 icon: <ClipboardList className="h-3.5 w-3.5" />,
                 onClick: () => {
                   const tasks = extractActionItems(output);
@@ -101,7 +104,7 @@ function Page() {
                 },
               },
               {
-                label: "Generate follow-up email",
+                label: "Draft Follow-up Email",
                 icon: <Mail className="h-3.5 w-3.5" />,
                 onClick: () => {
                   setHandoff({

@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { AiOutput } from "@/components/AiOutput";
@@ -13,12 +13,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Mail } from "lucide-react";
+import { ClipboardList, Mail } from "lucide-react";
 import { runTool } from "@/lib/ai";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
-import { takeHandoff } from "@/lib/handoff";
+import { setHandoff, takeHandoff } from "@/lib/handoff";
+import { getPromptOverride, fillPrompt } from "@/lib/prompts";
 
 export const Route = createFileRoute("/email")({
   component: () => (
@@ -36,6 +37,7 @@ export const Route = createFileRoute("/email")({
 
 function EmailPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [recipient, setRecipient] = useState("");
   const [subject, setSubject] = useState("");
   const [points, setPoints] = useState("");
@@ -51,17 +53,21 @@ function EmailPage() {
     if (h) {
       setSubject(h.subject);
       setPoints(h.points);
-      toast.message("Loaded from meeting summary — review and generate.");
+      toast.message("Loaded from another tool — review and generate.");
     }
   }, []);
 
   const generate = async () => {
     setLoading(true);
     try {
+      const override = getPromptOverride("email");
+      const filled = override
+        ? fillPrompt(override, { recipient, subject, points, tone, audience })
+        : customPrompt;
       const r = await runTool(
         "email",
         { recipient, subject, points, tone, audience },
-        customPrompt,
+        filled,
       );
       setOutput(r.output);
       setPrompt(r.prompt);
@@ -155,6 +161,26 @@ function EmailPage() {
             onPromptChange={setCustomPrompt}
             exportTitle={subject || "Email"}
             calendarTitle={subject ? `Send: ${subject}` : "Send email"}
+            extraActions={output ? [
+              {
+                label: "Save tasks from this email",
+                icon: <ClipboardList className="h-3.5 w-3.5" />,
+                onClick: () => {
+                  // Pull bullet/numbered lines from the email body as tasks.
+                  const tasks = output
+                    .split("\n")
+                    .filter((l) => /^(\s*[-*•]\s+|\s*\d+\.\s+)/.test(l))
+                    .map((l) => l.replace(/^(\s*[-*•]\s+|\s*\d+\.\s+)/, "").trim())
+                    .filter(Boolean)
+                    .slice(0, 15)
+                    .join("\n");
+                  if (!tasks) return toast.error("No bullet tasks detected in the email.");
+                  setHandoff({ kind: "task", tasks, range: "this week", source: "email" });
+                  toast.success("Loaded into Task Planner");
+                  navigate({ to: "/tasks" });
+                },
+              },
+            ] : undefined}
           />
         </div>
       </div>
