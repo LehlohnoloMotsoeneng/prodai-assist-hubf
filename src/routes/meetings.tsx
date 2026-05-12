@@ -1,16 +1,17 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { AiOutput } from "@/components/AiOutput";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { CalendarCheck } from "lucide-react";
+import { CalendarCheck, ClipboardList, Mail } from "lucide-react";
 import { runTool } from "@/lib/ai";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 import { Header } from "./email";
+import { setHandoff, extractActionItems, extractSummary } from "@/lib/handoff";
 
 export const Route = createFileRoute("/meetings")({
   component: () => (
@@ -27,6 +28,7 @@ export const Route = createFileRoute("/meetings")({
 });
 
 function Page() {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [notes, setNotes] = useState("");
   const [output, setOutput] = useState("");
@@ -84,6 +86,35 @@ function Page() {
             onSave={output ? save : undefined}
             prompt={prompt}
             onPromptChange={setCustomPrompt}
+            exportTitle="Meeting summary"
+            calendarTitle="Meeting follow-up"
+            extraActions={output ? [
+              {
+                label: "Send action items to Task Planner",
+                icon: <ClipboardList className="h-3.5 w-3.5" />,
+                onClick: () => {
+                  const tasks = extractActionItems(output);
+                  if (!tasks) return toast.error("No action items detected.");
+                  setHandoff({ kind: "task", tasks, range: "this week", source: "meeting" });
+                  toast.success("Loaded into Task Planner");
+                  navigate({ to: "/tasks" });
+                },
+              },
+              {
+                label: "Generate follow-up email",
+                icon: <Mail className="h-3.5 w-3.5" />,
+                onClick: () => {
+                  setHandoff({
+                    kind: "email",
+                    subject: "Follow-up: " + (notes.split("\n")[0]?.slice(0, 60) || "meeting"),
+                    points: extractSummary(output) + "\n\nAction items:\n" + extractActionItems(output),
+                    source: "meeting",
+                  });
+                  toast.success("Loaded into Email Generator");
+                  navigate({ to: "/email" });
+                },
+              },
+            ] : undefined}
           />
         </div>
       </div>
