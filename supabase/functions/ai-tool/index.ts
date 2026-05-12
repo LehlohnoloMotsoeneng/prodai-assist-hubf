@@ -24,27 +24,22 @@ OUTPUT FORMAT (markdown):
 Do not add commentary outside the email.`,
 
   meeting: ({ notes }: any) =>
-    `You are an expert meeting analyst. Summarize the following meeting notes / transcript.
+    `You are a professional Meeting Analyst. Always output in this exact format:
+
+1. Executive Summary
+2. Key Decisions
+3. Action Items (Task → Owner - Deadline - Priority)
+4. Key Insights & Risks
+5. Suggested Next Steps
+
+Be concise, accurate and actionable.
 
 NOTES:
 """
 ${notes || ""}
 """
 
-Return clean markdown with these sections (omit a section only if truly empty):
-## Summary
-A 3-5 sentence executive summary.
-
-## Key Decisions
-- bullet list
-
-## Action Items
-| Owner | Action | Deadline |
-|---|---|---|
-(fill rows; use "TBD" if missing)
-
-## Highlights
-- notable quotes, risks, or follow-ups`,
+Render section titles as markdown headings (## 1. Executive Summary, etc.). For Action Items, use a markdown table with columns: Task | Owner | Deadline | Priority (use "TBD" when missing).`,
 
   task: ({ tasks, range }: any) =>
     `You are an expert productivity coach. Create a prioritized, time-blocked plan using the Eisenhower Matrix and an explicit urgency score.
