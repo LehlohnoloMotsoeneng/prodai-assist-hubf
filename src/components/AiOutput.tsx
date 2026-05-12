@@ -179,8 +179,8 @@ export function AiOutput({
           </article>
         )}
       </div>
-      <div className="border-t bg-muted/30 px-4 py-2 text-[11px] text-muted-foreground">
-        AI-generated — please review for accuracy before sending or sharing.
+      <div className="border-t bg-amber-500/10 px-4 py-2.5 text-xs font-medium text-amber-700 dark:text-amber-300">
+        ⚠️ AI-Generated Content • Please review for accuracy, tone, and facts before using. May contain errors.
       </div>
     </div>
   );
