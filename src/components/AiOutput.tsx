@@ -1,7 +1,7 @@
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Copy, Check, RefreshCw, Save, FileEdit } from "lucide-react";
+import { Copy, Check, RefreshCw, Save, FileEdit, Download, CalendarPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -12,7 +12,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
+import { exportPdf, exportDoc, exportIcs } from "@/lib/exports";
+
+export type ExtraAction = { label: string; icon?: React.ReactNode; onClick: () => void };
 
 export function AiOutput({
   output,
@@ -22,6 +31,9 @@ export function AiOutput({
   onSave,
   prompt,
   onPromptChange,
+  exportTitle = "ProdAI output",
+  calendarTitle,
+  extraActions,
 }: {
   output: string;
   onChange?: (v: string) => void;
@@ -30,6 +42,9 @@ export function AiOutput({
   onSave?: () => void;
   prompt?: string;
   onPromptChange?: (v: string) => void;
+  exportTitle?: string;
+  calendarTitle?: string;
+  extraActions?: ExtraAction[];
 }) {
   const [copied, setCopied] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -111,8 +126,40 @@ export function AiOutput({
             {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
             Copy
           </Button>
+          {output && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-1.5">
+                  <Download className="h-3.5 w-3.5" /> Export
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => exportPdf(exportTitle, output)}>
+                  <Download className="mr-2 h-3.5 w-3.5" /> PDF (print)
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => exportDoc(exportTitle, output)}>
+                  <Download className="mr-2 h-3.5 w-3.5" /> Word (.doc)
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => exportIcs(calendarTitle ?? exportTitle, undefined, 30, output.slice(0, 600))}
+                >
+                  <CalendarPlus className="mr-2 h-3.5 w-3.5" /> Apply to Calendar (.ics)
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </div>
+      {extraActions && extraActions.length > 0 && output && (
+        <div className="flex flex-wrap gap-2 border-b bg-muted/20 px-4 py-2">
+          {extraActions.map((a) => (
+            <Button key={a.label} variant="outline" size="sm" className="gap-1.5" onClick={a.onClick}>
+              {a.icon}
+              {a.label}
+            </Button>
+          ))}
+        </div>
+      )}
       <div className="p-4">
         {loading && !output ? (
           <div className="space-y-2">

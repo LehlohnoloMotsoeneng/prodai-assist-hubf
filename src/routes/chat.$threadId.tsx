@@ -73,7 +73,23 @@ function ChatThread() {
     }
 
     try {
-      const history = [...messages, userMsg].map((m) => ({ role: m.role, content: m.content }));
+      // Context memory: pull last few tool runs so the assistant remembers
+      // emails / meetings / plans from other tabs.
+      const { data: recent } = await supabase
+        .from("tool_sessions")
+        .select("tool, title, output, created_at")
+        .order("created_at", { ascending: false })
+        .limit(5);
+      const memory = (recent ?? [])
+        .map((r: any) => `- [${r.tool}] ${r.title}: ${String(r.output).slice(0, 280).replace(/\n/g, " ")}`)
+        .join("\n");
+      const contextMsg = memory
+        ? [{ role: "system" as const, content: `Recent workspace activity (use as memory across tabs):\n${memory}` }]
+        : [];
+      const history = [
+        ...contextMsg,
+        ...[...messages, userMsg].map((m) => ({ role: m.role, content: m.content })),
+      ];
       const full = await streamChat(history, (delta) => {
         setMessages((curr) => curr.map((m) => m.id === assistantId ? { ...m, content: m.content + delta } : m));
       });

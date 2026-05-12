@@ -11,6 +11,14 @@ Tone: ${tone || "Formal"}
 Key points to cover:
 ${points || "—"}
 
+Tone guidance:
+- "Formal" — measured, professional, corporate.
+- "Friendly" — warm, conversational, light contractions.
+- "Persuasive" — confident, benefit-led, clear ask.
+- "Urgent" — direct, time-sensitive, action-first.
+- "Collaborative" — inclusive, "we/let's", invites input.
+- "South African business English" — polite, professional South African register: courteous greetings ("Good day"), measured phrasing, occasional local idioms ("Kindly revert", "Please advise", "Trust this finds you well"), British spelling (organisation, realise, colour). Avoid slang. Match SA business etiquette.
+
 Output format (markdown):
 **Subject:** <a strong subject line>
 
@@ -42,13 +50,19 @@ A 3-5 sentence executive summary.
 - notable quotes, risks, or follow-ups`,
 
   task: ({ tasks, range }: any) =>
-    `You are an expert productivity coach. Create a prioritized, time-blocked plan.
+    `You are an expert productivity coach. Create a prioritized, time-blocked plan using the Eisenhower Matrix and an explicit urgency score.
 
 Date range: ${range || "today"}
 Tasks / goals:
 ${tasks || ""}
 
 Return clean markdown with:
+## Urgency Scoring
+Rank each task with an urgency score (1-5, where 5 = drop everything) and an impact score (1-5). Show as a table:
+| Task | Urgency | Impact | Priority |
+|---|---|---|---|
+Where Priority = "P1 — Do now", "P2 — Schedule", "P3 — Delegate", or "P4 — Drop", derived from the matrix.
+
 ## Eisenhower Matrix
 | Quadrant | Tasks |
 |---|---|

@@ -47,21 +47,32 @@ const features = [
   },
 ] as const;
 
+// Rough time-saved estimates per artifact (minutes).
+const TIME_SAVED = { email: 15, meeting: 30, task: 20 } as const;
+
 function Dashboard() {
   const { user } = useAuth();
   const [counts, setCounts] = useState({ threads: 0, sessions: 0 });
+  const [timeSaved, setTimeSaved] = useState({ week: 0, total: 0 });
 
   useEffect(() => {
     (async () => {
-      const [t, s] = await Promise.all([
+      const weekAgo = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString();
+      const [t, s, allTools, weekTools] = await Promise.all([
         supabase.from("chat_threads").select("id", { count: "exact", head: true }),
         supabase.from("tool_sessions").select("id", { count: "exact", head: true }),
+        supabase.from("tool_sessions").select("tool"),
+        supabase.from("tool_sessions").select("tool").gte("created_at", weekAgo),
       ]);
+      const sum = (rows: any[] | null) =>
+        (rows ?? []).reduce((acc, r) => acc + (TIME_SAVED[r.tool as keyof typeof TIME_SAVED] ?? 10), 0);
       setCounts({ threads: t.count ?? 0, sessions: s.count ?? 0 });
+      setTimeSaved({ total: sum(allTools.data), week: sum(weekTools.data) });
     })();
   }, []);
 
   const name = user?.email?.split("@")[0] ?? "there";
+  const fmtHours = (m: number) => (m / 60).toFixed(1);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 md:py-10">
@@ -81,9 +92,16 @@ function Dashboard() {
         </div>
       </div>
 
-      <div className="mb-8 grid gap-3 sm:grid-cols-2">
-        <StatCard label="Saved sessions" value={counts.sessions} />
-        <StatCard label="Conversations" value={counts.threads} />
+      <div className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <InsightCard
+          label="This week saved"
+          value={`${fmtHours(timeSaved.week)}h`}
+          accent
+          hint="Estimated time vs. doing it manually"
+        />
+        <InsightCard label="Total time saved" value={`${fmtHours(timeSaved.total)}h`} />
+        <InsightCard label="Saved sessions" value={String(counts.sessions)} />
+        <InsightCard label="Conversations" value={String(counts.threads)} />
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
@@ -108,13 +126,18 @@ function Dashboard() {
   );
 }
 
-function StatCard({ label, value }: { label: string; value: number }) {
+function InsightCard({
+  label, value, hint, accent,
+}: { label: string; value: string; hint?: string; accent?: boolean }) {
   return (
-    <div className="rounded-xl border bg-card px-5 py-4">
-      <div className="text-xs uppercase tracking-wide text-muted-foreground">
-        {label}
-      </div>
+    <div
+      className={`rounded-xl border px-5 py-4 ${
+        accent ? "bg-gradient-to-br from-primary/10 to-brand/10 border-primary/30" : "bg-card"
+      }`}
+    >
+      <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
       <div className="mt-1 text-2xl font-semibold">{value}</div>
+      {hint && <div className="mt-1 text-[11px] text-muted-foreground">{hint}</div>}
     </div>
   );
 }

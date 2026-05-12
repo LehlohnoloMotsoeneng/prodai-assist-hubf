@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { AiOutput } from "@/components/AiOutput";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ import { runTool } from "@/lib/ai";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
+import { takeHandoff } from "@/lib/handoff";
 
 export const Route = createFileRoute("/email")({
   component: () => (
@@ -44,6 +45,15 @@ function EmailPage() {
   const [prompt, setPrompt] = useState<string | undefined>();
   const [customPrompt, setCustomPrompt] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const h = takeHandoff("email");
+    if (h) {
+      setSubject(h.subject);
+      setPoints(h.points);
+      toast.message("Loaded from meeting summary — review and generate.");
+    }
+  }, []);
 
   const generate = async () => {
     setLoading(true);
@@ -109,7 +119,14 @@ function EmailPage() {
             <Select value={tone} onValueChange={setTone}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                {["Formal", "Friendly", "Persuasive", "Urgent"].map((t) => (
+                {[
+                  "Formal",
+                  "Friendly",
+                  "Persuasive",
+                  "Urgent",
+                  "Collaborative",
+                  "South African business English",
+                ].map((t) => (
                   <SelectItem key={t} value={t}>{t}</SelectItem>
                 ))}
               </SelectContent>
@@ -136,6 +153,8 @@ function EmailPage() {
             onSave={output ? save : undefined}
             prompt={prompt}
             onPromptChange={setCustomPrompt}
+            exportTitle={subject || "Email"}
+            calendarTitle={subject ? `Send: ${subject}` : "Send email"}
           />
         </div>
       </div>
