@@ -5,10 +5,10 @@
 **Live Demo:** [https://prodai-assist-hubf.lovable.app/](https://prodai-assist-hubf.lovable.app/)
 
 ## Problem Statement
-Professionals waste significant time on repetitive tasks such as drafting emails, summarizing meetings, planning schedules, and managing tasks. ProdAI Assistant solves this by providing an integrated AI platform that automates these workflows, saving 10–15 hours per week.
+Professionals across industries, especially in South Africa’s dynamic job market, spend excessive time on repetitive tasks such as drafting emails, summarizing meetings, planning schedules, and task management. ProdAI Assistant solves this by providing one integrated AI platform that automates these workflows, potentially saving users 10–15 hours per week.
 
 ## Solution Overview
-ProdAI is a modern, responsive SaaS-style web application built with Lovable.dev. It features a clean dashboard with **four powerful integrated AI tools** that work together seamlessly.
+ProdAI is a modern, responsive SaaS-style web application built with Lovable.dev. It features a clean, professional dashboard with four fully integrated AI tools.
 
 ## Key Features
 
@@ -44,9 +44,9 @@ ProdAI is a modern, responsive SaaS-style web application built with Lovable.dev
 - Productivity Insights dashboard
 - Editable outputs + export options
   
-## Prompt Engineering (25% Criteria)
+## Prompt Engineering 
 
-All tools use advanced, structured prompts with **Role + Task + Format + Constraints**.
+All tools use **highly structured prompts** following best practices (Role, Task, Constraints, Output Format, Chain-of-Thought).
 
 **Email Generator Prompt:** [You are an expert Executive Communication Strategist with 15+ years of experience in professional business writing.
 
@@ -106,7 +106,7 @@ Be helpful, concise, and action-oriented. Suggest relevant tools from the dashbo
 - Advanced Prompt Engineering with ChatGPT/Gemini for refinement
 - Markdown + Structured Output formats
   
-## Responsible AI Practices (10% Criteria)
+## Responsible AI Practices 
 
 - Clear disclaimer on **every** AI output:
   **"⚠️ AI-Generated Content • Please review for accuracy, tone, and facts before using. May contain errors."**
