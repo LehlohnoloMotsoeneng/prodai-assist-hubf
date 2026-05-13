@@ -2,6 +2,8 @@
 
 ![ProdAI Dashboard](https://prodai-assist-hubf.lovable.app/)
 
+**Live Demo:** [https://prodai-assist-hubf.lovable.app/](https://prodai-assist-hubf.lovable.app/)
+
 ## Problem Statement
 Professionals waste significant time on repetitive tasks such as drafting emails, summarizing meetings, planning schedules, and managing tasks. ProdAI Assistant solves this by providing an integrated AI platform that automates these workflows, saving 10–15 hours per week.
 
