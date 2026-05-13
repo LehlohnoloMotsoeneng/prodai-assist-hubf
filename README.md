@@ -84,7 +84,7 @@ All tools use advanced, structured prompts with **Role + Task + Format + Constra
 - **Total estimated: 10–15 hours/week**
   
 ## Setup & Usage
-1. Visit [Your Lovable App Link]
+1. Visit [[Your Lovable App Link](https://prodai-assist-hubf.lovable.app/)]
 2. Use the sidebar to navigate tools
 3. All features are ready to use
    
