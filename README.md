@@ -100,46 +100,235 @@ Make it realistic and actionable for a busy professional.]
 
 Be helpful, concise, and action-oriented. Suggest relevant tools from the dashboard when appropriate. Always end responses with clear next actions.]
 
-## 🛠️ Tools Used
+# 🛠️ Tools & Technologies Used
 
-- **Lovable.dev** – Main development platform
-- Advanced Prompt Engineering with ChatGPT/Gemini for refinement
-- Markdown + Structured Output formats
-  
-## ⚖️ Responsible AI Practices
+| Technology | Purpose |
+|---|---|
+| React 19 | Frontend UI framework |
+| TanStack Start | Full-stack React framework |
+| TanStack Router | File-based routing |
+| TanStack Query | Server state management |
+| Tailwind CSS v4 | Styling and responsiveness |
+| Radix UI | Accessible UI primitives |
+| Lucide React | Icon library |
+| Sonner | Toast notifications |
+| TypeScript | Type safety |
+| Vite | Build tool |
+| Lovable.dev | AI development + API gateway |
+| Cloudflare Workers | Scalable edge deployment |
 
-- Clear disclaimer on **every** AI output:
-  **"⚠️ AI-Generated Content • Please review for accuracy, tone, and facts before using. May contain errors."**
+---
+
+# 📂 Project Structure
+
+```bash
+src/
+├── components/
+│   ├── ui/
+│   ├── AppLayout.tsx
+│   ├── HistoryPanel.tsx
+│   ├── OutputPanel.tsx
+│   └── ToolShell.tsx
+├── hooks/
+│   ├── use-mobile.tsx
+│   └── use-theme.ts
+├── lib/
+│   ├── ai-client.ts
+│   └── use-tool-history.ts
+├── routes/
+│   ├── api/ai.ts
+│   ├── __root.tsx
+│   ├── index.tsx
+│   ├── email.tsx
+│   ├── summarize.tsx
+│   ├── planner.tsx
+│   ├── writer.tsx
+│   ├── translate.tsx
+│   └── chat.tsx
+└── styles.css
+```
+
+---
+
+
+# ⚖️ Responsible AI Practices
+
+- Clear disclaimer on every AI-generated output:
+
+> ⚠️ AI-Generated Content • Please review for accuracy, tone, and facts before using. May contain errors.
+
 - Limitations documented (hallucinations, context limits, bias awareness)
 - User can always edit outputs
 - No storage of sensitive data
-- Transparency: Prompt Library is visible to users
-  
-## 🧩 Challenges & Solutions
+- Transparency through visible prompt structures
+- Ethical and inclusive prompt engineering practices
 
-- Challenge: Inconsistent output format → Solution: Strict structured prompts with exact output templates
-- Challenge: Lack of context between tools → Solution: Session memory + cross-feature buttons
-- Challenge: Generic AI tone → Solution: Role-based expert prompts + tone controls
-  
-## 📈 Productivity Impact
+---
 
-- Emails: ~45 mins saved per day
-- Meeting follow-up: ~30 mins saved
-- Task planning: ~20 mins saved
-- **Total estimated: 10–15 hours/week**
-  
-## 📱 Setup & Usage
-1. Visit [[Your Lovable App Link](https://prodai-assist-hubf.lovable.app/)]
-2. Use the sidebar to navigate tools
-3. All features are ready to use
+# 🧩 Challenges & Solutions
+
+| Challenge | Solution |
+|---|---|
+| Inconsistent output formatting | Structured prompts with exact templates |
+| Generic AI tone | Role-based prompts + tone controls |
+| Lack of workflow continuity | Cross-tool integration |
+| Managing API cost | Token-efficient prompts |
+| Responsive UI complexity | Tailwind CSS responsive layouts |
+| State persistence | localStorage-based history management |
+
+---
+
+# 📈 Productivity Impact
+
+| Workflow | Estimated Time Saved |
+|---|---|
+| Email Writing | ~45 mins/day |
+| Meeting Follow-up | ~30 mins/day |
+| Task Planning | ~20 mins/day |
+| Content Creation | ~25 mins/day |
+| Translation Tasks | ~15 mins/day |
+
+## ✅ Total Estimated Savings:
+
+# **10–15 hours per week**
+
+---
+
+# 🌙 Additional Capabilities
+
+- Dark / Light mode toggle with persistence
+- Mobile responsive dashboard
+- Local history storage (up to 30 entries per tool)
+- Copy output instantly
+- Download generated outputs as files
+- Fast and scalable architecture
+- Clean SaaS-style UI/UX
+- Edge-ready deployment architecture
+
+---
+
+# ⚡ Scalability Notes
+
+- Stateless server architecture
+- Thin `/api/ai` proxy layer
+- No database required
+- LocalStorage-powered history system
+- Cloudflare Workers global edge deployment
+- Modular route architecture for easy feature expansion
+
+---
+
+# 📱 Setup & Usage
+
+## 1. Clone the Repository
+
+```bash
+git clone https://github.com/Irishtheboy/smart-work-companion.git
+cd smart-work-companion
+```
+
+---
+
+## 2. Install Dependencies
+
+```bash
+npm install
+```
+
+or
+
+```bash
+bun install
+```
+
+---
+
+## 3. Configure Environment Variables
+
+```bash
+cp .env.example .env
+```
+
+Inside `.env`:
+
+```env
+LOVABLE_API_KEY=your_api_key_here
+```
+
+Get your API key from Lovable.dev Workspace Settings.
+
+---
+
+## 4. Run Development Server
+
+```bash
+npm run dev
+```
+
+or
+
+```bash
+bun dev
+```
+
+Open:
+
+```txt
+http://localhost:3000
+```
+
+---
+
+## 5. Build for Production
+
+```bash
+npm run build
+```
+
+---
+
+## 6. Deploy to Cloudflare Workers
+
+```bash
+npx wrangler deploy
+```
+
+---
    
-## 📸 Screenshots
-- Full Dashboard
-- Email Generator
-- Meeting Summarizer (with integration buttons)
-- Task Planner
-- AI Chatbot
-- Prompt Library
+📸 Screenshots
+
+## Dashboard
+
+*Add screenshot here*
+
+## Smart Email Generator
+
+*Add screenshot here*
+
+## Meeting Notes Summarizer
+
+*Add screenshot here*
+
+## AI Task Planner
+
+*Add screenshot here*
+
+## Content Writer
+
+*Add screenshot here*
+
+## AI Translator
+
+*Add screenshot here*
+
+## AI Chatbot
+
+*Add screenshot here*
+
+## Prompt Library
+
+*Add screenshot here*
+
 ---
 ### 2. Final Checklist for 100%
 Go through this **right now**:
